@@ -29,10 +29,10 @@ def main():
 	i=0	
 	mode=0
 	
-	print 'walls :' 
-	print walls
-	print 'roads :'
-	print roads
+	#print 'walls :' 
+	#print walls
+	#print 'roads :'
+	#print roads
 	print '###################'
 	print '#mode(on keyboard):'
 	print '#0) passive'
@@ -45,7 +45,7 @@ def main():
 	print '#Press S to save map'
 	print '###################'
 	
-	zoom = 10
+	zoom = 8
 	pos=0,0
 	move_x,move_y=0,0
 	
@@ -180,15 +180,49 @@ def main():
 							x+=1
 							y-=4
 				
+				if mode ==6:
+					x_start=pos[0]/zoom-move_x
+					y_start=pos[1]/zoom-move_y
+					
+					x=x_start-4
+					y=y_start-4
+					while x<=x_start+4 and y<=y_start+4:	
+						i=0
+						while i<len(walls):
+							if walls[i]==[x,y]:
+								print 'xxxxx'
+								walls.pop(i)
+							i+=1
+						if y<y_start+4:
+							y+=1
+						else:
+							x+=1
+							y-=8
+							
+					x=x_start-4
+					y=y_start-4
+					while x<=x_start+4 and y<=y_start+4:	
+						i=0
+						while i<len(roads):
+							if roads[i]==[x,y]:
+								print 'xxxxx'
+								roads.pop(i)
+							i+=1
+						if y<y_start+4:
+							y+=1
+						else:
+							x+=1
+							y-=8
+											
 			if event.type == 5:
 				if event.button == 4:#+
-					if zoom<=100:
+					if zoom<=32:
 						zoom*=2	
 						move_x-=(640/(zoom*2))
 						move_y-=(640/(zoom*2))
 						
 				if event.button == 5:#-
-					if zoom>=5:
+					if zoom>=4:
 						zoom/=2
 						move_x+=(640/(zoom*4))
 						move_y+=(640/(zoom*4))
@@ -222,6 +256,10 @@ def main():
 					
 				if event.key == 53:#4_hard_road
 					mode=5
+					
+				if event.key == 54:#4_hard_road
+					mode=6
+					
 					
 				if event.key == 115:#s_save
 					file=open('base_new.txt','w')
@@ -269,11 +307,15 @@ def main():
 				
 			if mode==5:#big green cell
 				pygame.draw.rect(screen,(127,255,0),(pos[0]-zoom*2,pos[1]-zoom*2,zoom*5,zoom*5))
+				
+			if mode==6:#very_big red cell
+				pygame.draw.rect(screen,(255,0,0),(pos[0]-zoom*4,pos[1]-zoom*4,zoom*9,zoom*9))
+				
 			
 			font=pygame.font.Font(None,16)
-			text=font.render(('Coordinate: x:'+(str(pos[0]/zoom))+' | y:'+(str(pos[1]/zoom))),1,(0,0,255))
+			text=font.render(('Coordinate: x:'+(str(pos[0]/zoom-move_x))+' | y:'+(str(pos[1]/zoom-move_y))),1,(0,0,255))
 			screen.blit(text,(505,630))
 				
 			pygame.display.flip()
-		time.sleep(0.01)
+			time.sleep(0.005)
 main()
